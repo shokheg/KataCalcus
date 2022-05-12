@@ -6,40 +6,38 @@ public class Main {
 
     static final String ROMAN_NUMBERS = "^(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$";
     static final String ARAB_POS_NUMBERS = "[0-9]+";
+    static final String EXIT = "exit";
+    static final String SPACES = "\\s+";
+    static final String MATH_OPERATORS = "[-+/*]";
     static final int[] decimal = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
     static final String[] letters = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        String inputString = null;
+        String inputString;
         System.out.println("> Введите выражение: ");
         do {
 
             inputString = scanner.nextLine();
             inputListen(inputString);
 
-        } while (!inputString.matches("(^exit)"));
-
-
-
+        } while (!inputString.matches(EXIT));
     }
 
     static String calc(String input) {
 
-        String[] inputNumbers = input.split("\\s+"); //использую разделитель ОДИН ИЛИ БОЛЕЕ пробелов для комфорта. как в приведенных к заданию примерах
+        String[] inputNumbers = input.split(SPACES); //использую разделитель "ОДИН ИЛИ БОЛЕЕ" пробелов для комфорта.
 
-        int number1 = 0;
-        int number2 = 0;
-
+        int number1, number2;
 
         if (inputNumbers.length < 3)
-            throw new IllegalArgumentException("Cтрока не является математической операцией");
+            throw new IllegalArgumentException("Строка не является математической операцией");
 
         if (inputNumbers.length > 3)
             throw new IllegalArgumentException("Формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
 
-        if (!inputNumbers[1].matches("[-+/*]"))
+        if (!inputNumbers[1].matches(MATH_OPERATORS))
             throw new IllegalArgumentException("Неправильный оператор.");
 
         if (inputNumbers[0].matches(ARAB_POS_NUMBERS) && inputNumbers[2].matches(ARAB_POS_NUMBERS)) {
@@ -63,9 +61,10 @@ public class Main {
 
             System.out.println("Введены валидные римские цифры.");
 
-            int checkResult = calculateArabNumbers(number1,number2,inputNumbers[1]);
+            int checkResult = calculateArabNumbers(number1, number2, inputNumbers[1]);
 
-            if (checkResult < 1) throw new IllegalArgumentException("Результат за пределами условий задачи (меньше единицы).");
+            if (checkResult < 1)
+                throw new IllegalArgumentException("Результат за пределами условий задачи (меньше единицы).");
 
             return integerToRoman(checkResult);
 
@@ -84,8 +83,7 @@ public class Main {
         };
     }
 
-
-    public static int romanToInteger(String roman) {
+    static int romanToInteger(String roman) {
         Map<Character, Integer> numbersMap = new HashMap<>();
         numbersMap.put('I', 1);
         numbersMap.put('V', 5);
@@ -98,18 +96,13 @@ public class Main {
         int result = 0;
 
         for (int i = 0; i < roman.length(); i++) {
-            char ch = roman.charAt(i);      //Current Roman Character
+            char ch = roman.charAt(i);
 
-            //Case 1
             if (i > 0 && numbersMap.get(ch) > numbersMap.get(roman.charAt(i - 1))) {
                 result += numbersMap.get(ch) - 2 * numbersMap.get(roman.charAt(i - 1));
-            }
-
-            //Case 2: just add the corresponding number to result.
-            else
+            } else
                 result += numbersMap.get(ch);
         }
-
         return result;
     }
 
@@ -119,7 +112,6 @@ public class Main {
         if (num < 1 || num > 3999) {
             System.out.println("Ошибка результата. Римское число вне диапазона 1 - 3999");
         }
-
         while (num > 0) {
             int maxFound = 0;
             for (int i = 0; i < decimal.length; i++) {
@@ -130,10 +122,8 @@ public class Main {
             roman += letters[maxFound];
             num -= decimal[maxFound];
         }
-
         return roman;
     }
-
 
     static void inputListen(String inputString) {
 
@@ -142,7 +132,6 @@ public class Main {
             System.out.println("> Результат: " + calc(inputString));
         }
     }
-
 }
 
 
